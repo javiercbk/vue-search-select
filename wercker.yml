@@ -48,7 +48,7 @@ deploy :
     - script:
         name: Configure git
         code: |-
-          git config --global user.email "moretajoo@gmail.com"
+          git config --global user.email "javierlecuona@gmail.com"
           git config --global user.name "wercker"
 
           # remove current .git folder

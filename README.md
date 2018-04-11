@@ -27,13 +27,13 @@ A Vue.js search select component.
     + ListSelect for MultiSelect
 
 
-### Release Notes 
+### Release Notes
 
-<https://github.com/moreta/vue-search-select/releases>
+<https://github.com/javiercbk/vue-search-select/releases>
 
 # Demo
 
-<http://moreta.github.io/vue-search-select/>
+<http://javiercbk.github.io/vue-search-select/>
 
 # Usage
 
@@ -288,3 +288,6 @@ yarn install
 yarn run dev
 ```
 
+# Acknowledgments
+
+This library is a fork from [vue-search-select](https://github.com/moreta/vue-search-select).
