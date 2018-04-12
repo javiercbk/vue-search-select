@@ -231,54 +231,55 @@ See All Samples : src/components/sample
 
 # Props
 
-| Component       | Name            | Type     | Default                    | Description                |
-|-----------------|-----------------|----------|----------------------------|----------------------------|
-| ModelSelect     | options         | Array    |                            | option list                |
-|                 | isError         | Boolean  | false                      | error style                |
-|                 | isDisabled      | Boolean  | false                      | disable component          |
-|                 | placeholder     | String   | ''                         |                            |
-|                 | filterPredicate | String   | new RegExp(inputText, 'i') |                            |
-|                 | customAttr      | Function | () => ''                   | Add custom html attribute  |
-| ModelListSelect | list            | Array    |                            | option list                |
-|                 | optionValue     | String   |                            | value key                  |
-|                 | optionText      | String   |                            | text key                   |
-|                 | customText      | Function |                            | custom text function       |
-|                 | isError         | Boolean  | false                      | error style                |
-|                 | isDisabled      | Boolean  | false                      | disable component          |
-|                 | placeholder     | String   | ''                         |                            |
-|                 | filterPredicate | String   | new RegExp(inputText, 'i') |                            |
-| BasicSelect     | options         | Array    |                            | option list                |
-|                 | selectedOption  | Object   | { value: '', text: '' }    | default option             |
-|                 | isError         | Boolean  | false                      | error style                |
-|                 | isDisabled      | Boolean  | false                      | disable component          |
-|                 | placeholder     | String   | ''                         |                            |
-|                 | customAttr      | Function | () => ''                   | Add custom html attribute  |
-|                 | filterPredicate | String   | new RegExp(inputText, 'i') |                            |
-| ListSelect      | list            | Array    |                            | option list                |
-|                 | optionValue     | String   |                            | value key                  |
-|                 | optionText      | String   |                            | text key                   |
-|                 | customText      | Function |                            | custom text function       |
-|                 | selectedItem    | Object   |                            | default option(raw object) |
-|                 | isError         | Boolean  | false                      | error style                |
-|                 | isDisabled      | Boolean  | false                      | disable component          |
-|                 | placeholder     | String   | ''                         |                            |
-|                 | filterPredicate | String   | new RegExp(inputText, 'i') |                            |
-| MultiSelect     | options         | Array    |                            | option list                |
-|                 | selectedOptions | Array    |                            | default option list        |
-|                 | isError         | Boolean  | false                      | error style                |
-|                 | isDisabled      | Boolean  | false                      | disable component          |
-|                 | placeholder     | String   | ''                         |                            |
-|                 | filterPredicate | String   | new RegExp(inputText, 'i') |                            |
-|                 | customAttr      | Function | () => ''                   | Add custom html attribute  |
-| MultiListSelect | list            | Array    |                            | option list                |
-|                 | optionValue     | String   |                            | value key                  |
-|                 | optionText      | String   |                            | text key                   |
-|                 | customText      | Function |                            | custom text function       |
-|                 | selectedItems   | Array    |                            | default option(raw object) |
-|                 | isError         | String   | false                      | error style                |
-|                 | isDisabled      | Boolean  | false                      | disable component          |
-|                 | placeholder     | String   | ''                         |                            |
-|                 | filterPredicate | String   | new RegExp(inputText, 'i') |                            |
+| Component       | Name               | Type     | Default                    | Description                |
+|-----------------|--------------------|----------|----------------------------|----------------------------|
+| ModelSelect     | options            | Array    |                            | option list                |
+|                 | isError            | Boolean  | false                      | error style                |
+|                 | isDisabled         | Boolean  | false                      | disable component          |
+|                 | placeholder        | String   | ''                         |                            |
+|                 | filterPredicate    | String   | new RegExp(inputText, 'i') |                            |
+|                 | customAttr         | Function | () => ''                   | Add custom html attribute  |
+|                 | showMissingOptions | Boolean  | false                      | Show missing options       |
+| ModelListSelect | list               | Array    |                            | option list                |
+|                 | optionValue        | String   |                            | value key                  |
+|                 | optionText         | String   |                            | text key                   |
+|                 | customText         | Function |                            | custom text function       |
+|                 | isError            | Boolean  | false                      | error style                |
+|                 | isDisabled         | Boolean  | false                      | disable component          |
+|                 | placeholder        | String   | ''                         |                            |
+|                 | filterPredicate    | String   | new RegExp(inputText, 'i') |                            |
+| BasicSelect     | options            | Array    |                            | option list                |
+|                 | selectedOption     | Object   | { value: '', text: '' }    | default option             |
+|                 | isError            | Boolean  | false                      | error style                |
+|                 | isDisabled         | Boolean  | false                      | disable component          |
+|                 | placeholder        | String   | ''                         |                            |
+|                 | customAttr         | Function | () => ''                   | Add custom html attribute  |
+|                 | filterPredicate    | String   | new RegExp(inputText, 'i') |                            |
+| ListSelect      | list               | Array    |                            | option list                |
+|                 | optionValue        | String   |                            | value key                  |
+|                 | optionText         | String   |                            | text key                   |
+|                 | customText         | Function |                            | custom text function       |
+|                 | selectedItem       | Object   |                            | default option(raw object) |
+|                 | isError            | Boolean  | false                      | error style                |
+|                 | isDisabled         | Boolean  | false                      | disable component          |
+|                 | placeholder        | String   | ''                         |                            |
+|                 | filterPredicate    | String   | new RegExp(inputText, 'i') |                            |
+| MultiSelect     | options            | Array    |                            | option list                |
+|                 | selectedOptions    | Array    |                            | default option list        |
+|                 | isError            | Boolean  | false                      | error style                |
+|                 | isDisabled         | Boolean  | false                      | disable component          |
+|                 | placeholder        | String   | ''                         |                            |
+|                 | filterPredicate    | String   | new RegExp(inputText, 'i') |                            |
+|                 | customAttr         | Function | () => ''                   | Add custom html attribute  |
+| MultiListSelect | list               | Array    |                            | option list                |
+|                 | optionValue        | String   |                            | value key                  |
+|                 | optionText         | String   |                            | text key                   |
+|                 | customText         | Function |                            | custom text function       |
+|                 | selectedItems      | Array    |                            | default option(raw object) |
+|                 | isError            | String   | false                      | error style                |
+|                 | isDisabled         | Boolean  | false                      | disable component          |
+|                 | placeholder        | String   | ''                         |                            |
+|                 | filterPredicate    | String   | new RegExp(inputText, 'i') |                            |
 
 
 # Run examples

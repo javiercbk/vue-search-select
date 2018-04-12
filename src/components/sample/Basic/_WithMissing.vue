@@ -6,7 +6,7 @@
                       :selected-option="item"
                       @select="onSelect"
                       :is-disabled="isDisabled"
-                      show-missing-options="true"s
+                      show-missing-options="true"
                       :customAttr="customAttr">
         </basic-select>
       </div>
