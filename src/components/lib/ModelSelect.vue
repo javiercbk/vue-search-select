@@ -48,6 +48,10 @@
   export default {
     mixins: [baseMixin, commonMixin, optionAwareMixin],
     props: {
+      showMissingOptions: {
+        type: Boolean,
+        default: false
+      },
       value: {
         type: [String, Number, Object]
       }
@@ -61,6 +65,15 @@
       }
     },
     computed: {
+      optionsWithOriginal () {
+        if (this.originalValue.value && this.showMissingOptions) {
+          const hasOriginalValue = this.options.filter(o => o.value === this.originalValue).length === 1
+          if (!hasOriginalValue) {
+            return this.options.concat([this.originalValue])
+          }
+        }
+        return this.options
+      },
       searchTextCustomAttr () {
         if (this.selectedOption && this.selectedOption.value) {
           return this.customAttr(this.selectedOption)
@@ -80,8 +93,8 @@
       },
       customAttrs () {
         try {
-          if (Array.isArray(this.options)) {
-            return this.options.map(o => this.customAttr(o))
+          if (Array.isArray(this.optionsWithOriginal)) {
+            return this.optionsWithOriginal.map(o => this.customAttr(o))
           }
         } catch (e) {
           // if there is an error, just return an empty array
@@ -108,7 +121,7 @@
       },
       filteredOptions () {
         if (this.searchText) {
-          return this.options.filter((option) => {
+          return this.optionsWithOriginal.filter((option) => {
             try {
               return this.filterPredicate(option.text, this.searchText)
             } catch (e) {
@@ -116,7 +129,7 @@
             }
           })
         } else {
-          return this.options
+          return this.optionsWithOriginal
         }
       },
       optionValue () {
@@ -127,7 +140,7 @@
         }
       },
       selectedOption () {
-        return this.options.find(option => {
+        return this.optionsWithOriginal.find(option => {
           return option.value === this.optionValue
         })
       }

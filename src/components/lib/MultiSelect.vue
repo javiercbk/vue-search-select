@@ -64,6 +64,10 @@
       selectedOptions: {
         type: Array
       },
+      showMissingOptions: {
+        type: Boolean,
+        default: false
+      },
       cleanSearch: {
         type: Boolean,
         default: true
@@ -73,11 +77,24 @@
       return {
         showMenu: false,
         searchText: '',
+        originalValues: [],
         mousedownState: false, // mousedown on option menu
         pointer: 0
       }
     },
+    created () {
+      this.originalValues = this.selectedOptions
+    },
     computed: {
+      optionsWithOriginal () {
+        if (this.originalValues.length && this.showMissingOptions) {
+          const missingValues = differenceBy(this.originalValues, this.options)
+          if (missingValues.length) {
+            return this.options.concat(missingValues)
+          }
+        }
+        return this.options
+      },
       inputText () {
         if (this.searchText) {
           return ''
@@ -109,7 +126,7 @@
         }
       },
       nonSelectOptions () {
-        return differenceBy(this.options, this.selectedOptions, 'value')
+        return differenceBy(this.optionsWithOriginal, this.selectedOptions, 'value')
       },
       filteredOptions () {
         if (this.searchText) {

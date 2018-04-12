@@ -12,6 +12,9 @@
     <h3>Custom attribute to allow custom css</h3>
     <custom-attr-example />
 
+    <h3>With missing value</h3>
+    <with-missing-example />
+
   </div>
 </template>
 
@@ -20,13 +23,15 @@
   import CustomAttrExample from './_CustomAttr'
   import ErrorPropExample from './_ErrorProp'
   import DisabledPropExample from './_DisabledProp'
+  import WithMissingExample from './_WithMissing'
 
   export default {
     components: {
       BasicExample,
       CustomAttrExample,
       ErrorPropExample,
-      DisabledPropExample
+      DisabledPropExample,
+      WithMissingExample
     }
   }
 </script>
