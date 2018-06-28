@@ -62,6 +62,10 @@
       httpClient: {
         type: Function,
         required: true
+      },
+      delayMillis: {
+        type: Number,
+        default: 500
       }
     },
     created () {
@@ -70,6 +74,7 @@
     data () {
       return {
         showMenu: false,
+        timeoutId: null,
         loading: false,
         searchText: '',
         originalValue: { text: '', value: '' },
@@ -141,16 +146,7 @@
     },
     watch: {
       searchText (newTerm) {
-        this.loading = true
-        this.showMenu = false
-        this.httpClient(newTerm).then((arr) => {
-          this.options = arr
-          this.showMenu = true
-        }).catch((err) => {
-          this.$emit('ajax-select-error', err)
-        }).finally(() => {
-          this.loading = false
-        })
+        this._requestAsyncData(newTerm)
       }
     },
     methods: {
@@ -191,6 +187,24 @@
         this.searchText = '' // reset text when select item
         this.closeOptions()
         this.$emit('select', option)
+      },
+      _requestAsyncData (newTerm) {
+        if (this.timeoutId) {
+          clearTimeout(this.timeoutId)
+        }
+        this.timeoutId = setTimeout(() => {
+          this.loading = true
+          this.showMenu = false
+          this.httpClient(newTerm).then((arr) => {
+            this.options = arr
+            this.showMenu = true
+          }).catch((err) => {
+            this.$emit('ajax-select-error', err)
+          }).finally(() => {
+            this.timeoutId = null
+            this.loading = false
+          })
+        }, this.delayMillis)
       }
     }
   }

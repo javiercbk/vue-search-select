@@ -2846,6 +2846,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    httpClient: {
 	      type: Function,
 	      required: true
+	    },
+	    delayMillis: {
+	      type: Number,
+	      default: 500
 	    }
 	  },
 	  created: function created() {
@@ -2854,6 +2858,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  data: function data() {
 	    return {
 	      showMenu: false,
+	      timeoutId: null,
 	      loading: false,
 	      searchText: '',
 	      originalValue: { text: '', value: '' },
@@ -2932,18 +2937,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	  watch: {
 	    searchText: function searchText(newTerm) {
-	      var _this3 = this;
-	
-	      this.loading = true;
-	      this.showMenu = false;
-	      this.httpClient(newTerm).then(function (arr) {
-	        _this3.options = arr;
-	        _this3.showMenu = true;
-	      }).catch(function (err) {
-	        _this3.$emit('ajax-select-error', err);
-	      }).finally(function () {
-	        _this3.loading = false;
-	      });
+	      this._requestAsyncData(newTerm);
 	    }
 	  },
 	  methods: {
@@ -2984,6 +2978,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.searchText = '';
 	      this.closeOptions();
 	      this.$emit('select', option);
+	    },
+	    _requestAsyncData: function _requestAsyncData(newTerm) {
+	      var _this3 = this;
+	
+	      if (this.timeoutId) {
+	        clearTimeout(this.timeoutId);
+	      }
+	      this.timeoutId = setTimeout(function () {
+	        _this3.loading = true;
+	        _this3.showMenu = false;
+	        _this3.httpClient(newTerm).then(function (arr) {
+	          _this3.options = arr;
+	          _this3.showMenu = true;
+	        }).catch(function (err) {
+	          _this3.$emit('ajax-select-error', err);
+	        }).finally(function () {
+	          _this3.timeoutId = null;
+	          _this3.loading = false;
+	        });
+	      }, this.delayMillis);
 	    }
 	  }
 	};

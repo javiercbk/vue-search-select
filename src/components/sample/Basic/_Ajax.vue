@@ -13,6 +13,7 @@
           placeholder="select item"
           :http-client="httpClient"
           loading-icon-class="fas fa-spinner fa-spin"
+          delay-millis="800"
           @select="onSelect">
         </ajax-basic-select>
       </div>
