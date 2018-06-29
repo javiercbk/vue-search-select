@@ -26,7 +26,7 @@
          :class="menuClass"
          :style="menuStyle"
          tabindex="-1">
-      <template v-for="(option, idx) in options">
+      <template v-for="(option, idx) in allOptions">
         <div class="item"
              :class="{ 'selected': option.selected, 'current': pointer === idx }"
              :data-vss-custom-attr="customAttrs[idx] ? customAttrs[idx] : ''"
@@ -70,7 +70,8 @@
     },
     created () {
       this.originalValue = this.selectedOption
-      this.allOptions = this.options;
+      this.allOptions = this.options
+      this._requestAsyncData('', true)
     },
     data () {
       return {
@@ -81,7 +82,7 @@
         originalValue: { text: '', value: '' },
         mousedownState: false, // mousedown on option menu
         pointer: 0,
-        allOptions: [],
+        allOptions: []
       }
     },
     computed: {
@@ -190,23 +191,31 @@
         this.closeOptions()
         this.$emit('select', option)
       },
-      _requestAsyncData (newTerm) {
+      _requestAsyncData (newTerm, first) {
+        let delayMillis = this.delayMillis
+        if (first) {
+          delayMillis = 0
+        }
         if (this.timeoutId) {
           clearTimeout(this.timeoutId)
         }
         this.timeoutId = setTimeout(() => {
           this.loading = true
-          this.showMenu = false
+          if (!first) {
+            this.showMenu = false
+          }
           this.httpClient(newTerm).then((arr) => {
             this.allOptions = arr
-            this.showMenu = true
+            if (!first) {
+              this.showMenu = true
+            }
           }).catch((err) => {
             this.$emit('ajax-select-error', err)
           }).finally(() => {
             this.timeoutId = null
             this.loading = false
           })
-        }, this.delayMillis)
+        }, delayMillis)
       }
     }
   }

@@ -13,7 +13,7 @@
           placeholder="select item"
           :http-client="httpClient"
           loading-icon-class="fas fa-spinner fa-spin"
-          delay-millis="800"
+          :delay-millis="800"
           @select="onSelect">
         </ajax-basic-select>
       </div>
@@ -85,10 +85,10 @@
         // select option from parent component
         this.item = options[0]
       },
-      httpClient () {
+      httpClient (newTerm) {
         return new Promise((resolve) => {
           setTimeout(() => {
-            resolve(options.filter(o => o.text.indexOf(this.searchText) !== -1))
+            resolve(options.filter(o => o.text.indexOf(newTerm) !== -1))
           }, 1000)
         })
       }

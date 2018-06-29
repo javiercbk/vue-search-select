@@ -2855,6 +2855,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  created: function created() {
 	    this.originalValue = this.selectedOption;
 	    this.allOptions = this.options;
+	    this._requestAsyncData('', true);
 	  },
 	  data: function data() {
 	    return {
@@ -2981,25 +2982,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.closeOptions();
 	      this.$emit('select', option);
 	    },
-	    _requestAsyncData: function _requestAsyncData(newTerm) {
+	    _requestAsyncData: function _requestAsyncData(newTerm, first) {
 	      var _this3 = this;
 	
+	      var delayMillis = this.delayMillis;
+	      if (first) {
+	        delayMillis = 0;
+	      }
 	      if (this.timeoutId) {
 	        clearTimeout(this.timeoutId);
 	      }
 	      this.timeoutId = setTimeout(function () {
 	        _this3.loading = true;
-	        _this3.showMenu = false;
+	        if (!first) {
+	          _this3.showMenu = false;
+	        }
 	        _this3.httpClient(newTerm).then(function (arr) {
 	          _this3.allOptions = arr;
-	          _this3.showMenu = true;
+	          if (!first) {
+	            _this3.showMenu = true;
+	          }
 	        }).catch(function (err) {
 	          _this3.$emit('ajax-select-error', err);
 	        }).finally(function () {
 	          _this3.timeoutId = null;
 	          _this3.loading = false;
 	        });
-	      }, this.delayMillis);
+	      }, delayMillis);
 	    }
 	  }
 	};
@@ -8567,7 +8576,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        $event.preventDefault();
 	      }
 	    }
-	  }, [_vm._l((_vm.options), function(option, idx) {
+	  }, [_vm._l((_vm.allOptions), function(option, idx) {
 	    return [_c('div', {
 	      staticClass: "item",
 	      class: {
