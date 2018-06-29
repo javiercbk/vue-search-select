@@ -70,6 +70,7 @@
     },
     created () {
       this.originalValue = this.selectedOption
+      this.allOptions = this.options;
     },
     data () {
       return {
@@ -79,18 +80,19 @@
         searchText: '',
         originalValue: { text: '', value: '' },
         mousedownState: false, // mousedown on option menu
-        pointer: 0
+        pointer: 0,
+        allOptions: [],
       }
     },
     computed: {
       optionsWithOriginal () {
         if (this.originalValue.value && this.showMissingOptions) {
-          const hasOriginalValue = this.options.filter(o => o.value === this.originalValue).length === 1
+          const hasOriginalValue = this.allOptions.filter(o => o.value === this.originalValue).length === 1
           if (!hasOriginalValue) {
-            return this.options.concat([this.originalValue])
+            return this.allOptions.concat([this.originalValue])
           }
         }
-        return this.options
+        return this.allOptions
       },
       searchTextCustomAttr () {
         if (this.selectedOption && this.selectedOption.value) {
@@ -196,7 +198,7 @@
           this.loading = true
           this.showMenu = false
           this.httpClient(newTerm).then((arr) => {
-            this.options = arr
+            this.allOptions = arr
             this.showMenu = true
           }).catch((err) => {
             this.$emit('ajax-select-error', err)

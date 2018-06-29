@@ -2854,6 +2854,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	  created: function created() {
 	    this.originalValue = this.selectedOption;
+	    this.allOptions = this.options;
 	  },
 	  data: function data() {
 	    return {
@@ -2863,7 +2864,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      searchText: '',
 	      originalValue: { text: '', value: '' },
 	      mousedownState: false,
-	      pointer: 0
+	      pointer: 0,
+	      allOptions: []
 	    };
 	  },
 	
@@ -2872,14 +2874,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _this = this;
 	
 	      if (this.originalValue.value && this.showMissingOptions) {
-	        var hasOriginalValue = this.options.filter(function (o) {
+	        var hasOriginalValue = this.allOptions.filter(function (o) {
 	          return o.value === _this.originalValue;
 	        }).length === 1;
 	        if (!hasOriginalValue) {
-	          return this.options.concat([this.originalValue]);
+	          return this.allOptions.concat([this.originalValue]);
 	        }
 	      }
-	      return this.options;
+	      return this.allOptions;
 	    },
 	    searchTextCustomAttr: function searchTextCustomAttr() {
 	      if (this.selectedOption && this.selectedOption.value) {
@@ -2989,7 +2991,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _this3.loading = true;
 	        _this3.showMenu = false;
 	        _this3.httpClient(newTerm).then(function (arr) {
-	          _this3.options = arr;
+	          _this3.allOptions = arr;
 	          _this3.showMenu = true;
 	        }).catch(function (err) {
 	          _this3.$emit('ajax-select-error', err);
