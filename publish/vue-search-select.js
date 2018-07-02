@@ -2940,7 +2940,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	  watch: {
 	    searchText: function searchText(newTerm) {
-	      this._requestAsyncData(newTerm);
+	      if (this.$refs.input === document.activeElement) {
+	        this._requestAsyncData(newTerm);
+	      }
 	    }
 	  },
 	  methods: {
