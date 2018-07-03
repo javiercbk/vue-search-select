@@ -2855,7 +2855,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  created: function created() {
 	    this.originalValue = this.selectedOption;
 	    this.allOptions = this.options;
-	    this._requestAsyncData('', true);
+	    this._requestAsyncData('', 0, false);
 	  },
 	  data: function data() {
 	    return {
@@ -2954,6 +2954,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    openOptions: function openOptions() {
 	      _common2.default.openOptions(this);
+	      if (this.selectedOption && this.selectedOption.value) {
+	        this._requestAsyncData(this.searchText, 0, false);
+	      }
 	    },
 	    blurInput: function blurInput() {
 	      _common2.default.blurInput(this);
@@ -2983,25 +2986,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.searchText = '';
 	      this.closeOptions();
 	      this.$emit('select', option);
+	      this.$refs.input.blur();
 	    },
-	    _requestAsyncData: function _requestAsyncData(newTerm, first) {
+	    _requestAsyncData: function _requestAsyncData(newTerm) {
 	      var _this3 = this;
 	
-	      var delayMillis = this.delayMillis;
-	      if (first) {
-	        delayMillis = 0;
-	      }
+	      var delayMillis = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.delayMillis;
+	      var toggleShow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+	
 	      if (this.timeoutId) {
 	        clearTimeout(this.timeoutId);
 	      }
 	      this.timeoutId = setTimeout(function () {
 	        _this3.loading = true;
-	        if (!first) {
+	        if (toggleShow) {
 	          _this3.showMenu = false;
 	        }
 	        _this3.httpClient(newTerm).then(function (arr) {
 	          _this3.allOptions = arr;
-	          if (!first) {
+	          if (toggleShow) {
 	            _this3.showMenu = true;
 	          }
 	        }).catch(function (err) {

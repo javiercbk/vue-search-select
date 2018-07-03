@@ -71,7 +71,7 @@
     created () {
       this.originalValue = this.selectedOption
       this.allOptions = this.options
-      this._requestAsyncData('', true)
+      this._requestAsyncData('', 0, false)
     },
     data () {
       return {
@@ -163,6 +163,9 @@
       },
       openOptions () {
         common.openOptions(this)
+        if (this.selectedOption && this.selectedOption.value) {
+          this._requestAsyncData(this.searchText, 0, false)
+        }
       },
       blurInput () {
         common.blurInput(this)
@@ -192,23 +195,20 @@
         this.searchText = '' // reset text when select item
         this.closeOptions()
         this.$emit('select', option)
+        this.$refs.input.blur()
       },
-      _requestAsyncData (newTerm, first) {
-        let delayMillis = this.delayMillis
-        if (first) {
-          delayMillis = 0
-        }
+      _requestAsyncData (newTerm, delayMillis = this.delayMillis, toggleShow = true) {
         if (this.timeoutId) {
           clearTimeout(this.timeoutId)
         }
         this.timeoutId = setTimeout(() => {
           this.loading = true
-          if (!first) {
+          if (toggleShow) {
             this.showMenu = false
           }
           this.httpClient(newTerm).then((arr) => {
             this.allOptions = arr
-            if (!first) {
+            if (toggleShow) {
               this.showMenu = true
             }
           }).catch((err) => {
