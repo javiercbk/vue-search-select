@@ -2996,7 +2996,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var offset = element.scrollTop + element.offsetHeight;
 	      var height = element.scrollHeight;
 	
-	      if (offset >= height && !this.exhaustedResults) {
+	      if (offset >= height && !this.exhaustedResults && !this.loading) {
 	        this._requestAsyncData({ term: this.searchText, delayMillis: 0, page: this.page + 1, toggleShow: false });
 	      }
 	    },
