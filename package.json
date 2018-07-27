@@ -1,6 +1,6 @@
 {
   "name": "vue-search-select-css",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "A Vue.js search select form component that allows css customizations (based on vue-search-select)",
   "author": "Javier Lecuona <javierlecuona@gmail.com>",
   "license": "MIT",
