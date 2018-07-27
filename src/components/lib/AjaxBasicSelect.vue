@@ -25,6 +25,7 @@
          @mousedown.prevent
          :class="menuClass"
          :style="menuStyle"
+         @scroll="onScroll"
          tabindex="-1">
       <template v-for="(option, idx) in allOptions">
         <div class="item"
@@ -71,7 +72,7 @@
     created () {
       this.originalValue = this.selectedOption
       this.allOptions = this.options
-      this._requestAsyncData('', 0, false)
+      this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
     },
     data () {
       return {
@@ -79,6 +80,8 @@
         timeoutId: null,
         loading: false,
         searchText: '',
+        page: 0,
+        exhaustedResults: false,
         originalValue: { text: '', value: '' },
         mousedownState: false, // mousedown on option menu
         pointer: 0,
@@ -149,8 +152,9 @@
     },
     watch: {
       searchText (newTerm) {
+        this.exhaustedResults = false
         if (this.$refs.input === document.activeElement) {
-          this._requestAsyncData(newTerm)
+          this._requestAsyncData({ term: newTerm })
         }
       }
     },
@@ -164,7 +168,7 @@
       openOptions () {
         common.openOptions(this)
         if (this.selectedOption && this.selectedOption.value) {
-          this._requestAsyncData(this.searchText, 0, false)
+          this._requestAsyncData({ term: this.searchText, delayMillis: 0, toggleShow: false })
         }
       },
       blurInput () {
@@ -197,7 +201,16 @@
         this.$emit('select', option)
         this.$refs.input.blur()
       },
-      _requestAsyncData (newTerm, delayMillis = this.delayMillis, toggleShow = true) {
+      onScroll (scrollEvent) {
+        const element = scrollEvent.target
+        const offset = element.scrollTop + element.offsetHeight
+        const height = element.scrollHeight
+
+        if (offset >= height && !this.exhaustedResults) {
+          this._requestAsyncData({ term: this.searchText, delayMillis: 0, page: this.page + 1, toggleShow: false })
+        }
+      },
+      _requestAsyncData ({ term, delayMillis = this.delayMillis, toggleShow = true, page = 0 }) {
         if (this.timeoutId) {
           clearTimeout(this.timeoutId)
         }
@@ -206,8 +219,15 @@
           if (toggleShow) {
             this.showMenu = false
           }
-          this.httpClient(newTerm).then((arr) => {
-            this.allOptions = arr
+          this.httpClient(term, page).then((arr) => {
+            this.page = page
+            if (page === 0) {
+              this.allOptions = arr
+            } else if (arr.length) {
+              this.allOptions = this.allOptions.concat(arr)
+            } else {
+              this.exhaustedResults = true
+            }
             if (toggleShow) {
               this.showMenu = true
             }
