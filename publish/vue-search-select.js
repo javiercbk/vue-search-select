@@ -2855,7 +2855,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  created: function created() {
 	    this.originalValue = this.selectedOption;
 	    this.allOptions = this.options;
-	    this._requestAsyncData('', 0, false);
+	    this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false });
 	  },
 	  data: function data() {
 	    return {
@@ -2863,6 +2863,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      timeoutId: null,
 	      loading: false,
 	      searchText: '',
+	      page: 0,
+	      exhaustedResults: false,
 	      originalValue: { text: '', value: '' },
 	      mousedownState: false,
 	      pointer: 0,
@@ -2940,8 +2942,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	  watch: {
 	    searchText: function searchText(newTerm) {
+	      this.exhaustedResults = false;
 	      if (this.$refs.input === document.activeElement) {
-	        this._requestAsyncData(newTerm);
+	        this._requestAsyncData({ term: newTerm });
 	      }
 	    }
 	  },
@@ -2955,7 +2958,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    openOptions: function openOptions() {
 	      _common2.default.openOptions(this);
 	      if (this.selectedOption && this.selectedOption.value) {
-	        this._requestAsyncData(this.searchText, 0, false);
+	        this._requestAsyncData({ term: this.searchText, delayMillis: 0, toggleShow: false });
 	      }
 	    },
 	    blurInput: function blurInput() {
@@ -2988,11 +2991,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.$emit('select', option);
 	      this.$refs.input.blur();
 	    },
-	    _requestAsyncData: function _requestAsyncData(newTerm) {
+	    onScroll: function onScroll(scrollEvent) {
+	      var element = scrollEvent.target;
+	      var offset = element.scrollTop + element.offsetHeight;
+	      var height = element.scrollHeight;
+	
+	      if (offset >= height && !this.exhaustedResults) {
+	        this._requestAsyncData({ term: this.searchText, delayMillis: 0, page: this.page + 1, toggleShow: false });
+	      }
+	    },
+	    _requestAsyncData: function _requestAsyncData(_ref) {
 	      var _this3 = this;
 	
-	      var delayMillis = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.delayMillis;
-	      var toggleShow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+	      var term = _ref.term,
+	          _ref$delayMillis = _ref.delayMillis,
+	          delayMillis = _ref$delayMillis === undefined ? this.delayMillis : _ref$delayMillis,
+	          _ref$toggleShow = _ref.toggleShow,
+	          toggleShow = _ref$toggleShow === undefined ? true : _ref$toggleShow,
+	          _ref$page = _ref.page,
+	          page = _ref$page === undefined ? 0 : _ref$page;
 	
 	      if (this.timeoutId) {
 	        clearTimeout(this.timeoutId);
@@ -3002,8 +3019,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (toggleShow) {
 	          _this3.showMenu = false;
 	        }
-	        _this3.httpClient(newTerm).then(function (arr) {
-	          _this3.allOptions = arr;
+	        _this3.httpClient(term, page).then(function (arr) {
+	          _this3.page = page;
+	          if (page === 0) {
+	            _this3.allOptions = arr;
+	          } else if (arr.length) {
+	            _this3.allOptions = _this3.allOptions.concat(arr);
+	          } else {
+	            _this3.exhaustedResults = true;
+	          }
 	          if (toggleShow) {
 	            _this3.showMenu = true;
 	          }
@@ -8579,7 +8603,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    on: {
 	      "mousedown": function($event) {
 	        $event.preventDefault();
-	      }
+	      },
+	      "scroll": _vm.onScroll
 	    }
 	  }, [_vm._l((_vm.allOptions), function(option, idx) {
 	    return [_c('div', {
