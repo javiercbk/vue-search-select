@@ -155,6 +155,11 @@
         if (this.$refs.input === document.activeElement) {
           this._requestAsyncData({ term: newTerm })
         }
+      },
+      disabled (newDisabled) {
+        if (!newDisabled) {
+          this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
+        }
       }
     },
     methods: {
