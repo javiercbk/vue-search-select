@@ -71,7 +71,6 @@
     },
     created () {
       this.originalValue = this.selectedOption
-      this.allOptions = this.options
       this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
     },
     data () {
