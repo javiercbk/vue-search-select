@@ -2992,7 +2992,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    mousedownItem: function mousedownItem() {
 	      _common2.default.mousedownItem(this);
 	    },
-	    reset: function reset() {
+	    resetData: function resetData() {
 	      this.searchText = '';
 	      this.closeOptions();
 	      this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false });

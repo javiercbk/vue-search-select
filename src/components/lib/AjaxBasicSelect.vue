@@ -202,7 +202,7 @@
       mousedownItem () {
         common.mousedownItem(this)
       },
-      reset () {
+      resetData () {
         this.searchText = ''
         this.closeOptions()
         this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
