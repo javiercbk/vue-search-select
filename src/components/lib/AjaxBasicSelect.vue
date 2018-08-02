@@ -150,6 +150,9 @@
       }
     },
     watch: {
+      value () {
+        this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
+      },
       searchText (newTerm) {
         this.exhaustedResults = false
         if (this.$refs.input === document.activeElement) {
@@ -198,6 +201,11 @@
       },
       mousedownItem () {
         common.mousedownItem(this)
+      },
+      reset () {
+        this.searchText = ''
+        this.closeOptions()
+        this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
       },
       selectItem (option) {
         this.searchText = '' // reset text when select item

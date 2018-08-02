@@ -2940,6 +2940,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  },
 	  watch: {
+	    value: function value() {
+	      this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false });
+	    },
 	    searchText: function searchText(newTerm) {
 	      this.exhaustedResults = false;
 	      if (this.$refs.input === document.activeElement) {
@@ -2988,6 +2991,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    mousedownItem: function mousedownItem() {
 	      _common2.default.mousedownItem(this);
+	    },
+	    reset: function reset() {
+	      this.searchText = '';
+	      this.closeOptions();
+	      this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false });
 	    },
 	    selectItem: function selectItem(option) {
 	      this.searchText = '';
