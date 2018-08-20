@@ -9,12 +9,18 @@
 
     <h3>With missing value</h3>
     <with-missing-example />
+
+    <h3>With ajax</h3>
+    <with-ajax />
+    <br>
+    <br>
   </div>
 
 </template>
 
 <script>
   import MultiExample from './_Multi'
+  import WithAjax from './_Ajax'
   import CustomMultiExample from './_CustomMulti'
   import WithMissingExample from './_WithMissing'
 
@@ -22,6 +28,7 @@
     components: {
       CustomMultiExample,
       MultiExample,
+      WithAjax,
       WithMissingExample
     }
   }

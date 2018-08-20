@@ -6,7 +6,7 @@
                       :selected-options="items"
                       placeholder="select item"
                       :customAttr="customAttr"
-                      show-missing-options="true"
+                      :show-missing-options="true"
                       @select="onSelect">
         </multi-select>
       </div>
