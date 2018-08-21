@@ -62,8 +62,26 @@
     { value: '21', text: 'more a' + ' - ' + '6' },
     { value: '22', text: 'more a' + ' - ' + '7' },
     { value: '23', text: 'more a' + ' - ' + '8' },
+    { value: '24', text: 'more a' + ' - ' + '9' },
+    { value: '25', text: 'more a' + ' - ' + '10' },
+    { value: '26', text: 'more a' + ' - ' + '10' },
+    { value: '27', text: 'more a' + ' - ' + '10' },
+    { value: '28', text: 'more a' + ' - ' + '10' },
+    { value: '29', text: 'more a' + ' - ' + '10' },
+    { value: '24', text: 'more a' + ' - ' + '10' },
+    { value: '24', text: 'more a' + ' - ' + '10' },
+    { value: '24', text: 'more a' + ' - ' + '10' },
+    { value: '24', text: 'more a' + ' - ' + '10' },
+    { value: '24', text: 'more a' + ' - ' + '10' },
+    { value: '24', text: 'more a' + ' - ' + '10' },
+    { value: '24', text: 'more a' + ' - ' + '10' },
+    { value: '24', text: 'more a' + ' - ' + '10' },
+    { value: '24', text: 'more a' + ' - ' + '10' },
+    { value: '24', text: 'more a' + ' - ' + '10' },
     { value: '24', text: 'more a' + ' - ' + '9' }
   ]
+
+  const perPage = 10
 
   export default {
     data () {
@@ -83,10 +101,17 @@
         // select option from parent component
         this.items = options
       },
-      httpClient (newTerm) {
+      httpClient (newTerm, page) {
+        const from = page * perPage
+        const to = from + perPage
         return new Promise((resolve) => {
           setTimeout(() => {
-            resolve(options.filter(o => o.text.indexOf(newTerm) !== -1))
+            const allResults = options.filter(o => o.text.indexOf(newTerm) !== -1)
+            if (allResults.length > perPage) {
+              resolve(allResults.slice(from, to))
+            } else {
+              resolve(allResults)
+            }
           }, 1000)
         })
       }

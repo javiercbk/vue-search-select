@@ -7,13 +7,11 @@
     <h3>Multi with custom attribute to allow custom css</h3>
     <custom-multi-example />
 
-    <h3>With missing value</h3>
-    <with-missing-example />
-
     <h3>With ajax</h3>
     <with-ajax />
-    <br>
-    <br>
+
+    <h3>With missing value</h3>
+    <with-missing-example />
   </div>
 
 </template>

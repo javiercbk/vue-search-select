@@ -34,6 +34,7 @@
          @mousedown.prevent
          :class="menuClass"
          :style="menuStyle"
+         @scroll="onScroll"
          tabindex="-1">
       <template v-for="(option, idx) in filteredOptions">
         <div class="item"
@@ -223,6 +224,15 @@
         // this.closeOptions()
         this.searchText = ''
         this.$emit('select', selectedOptions, option, 'insert')
+      },
+      onScroll (scrollEvent) {
+        const element = scrollEvent.target
+        const offset = element.scrollTop + element.offsetHeight
+        const height = element.scrollHeight
+
+        if (offset >= height && !this.exhaustedResults && !this.loading) {
+          this._requestAsyncData({ term: this.searchText, delayMillis: 0, page: this.page + 1, toggleShow: false })
+        }
       },
       deleteItem (option) {
         const selectedOptions = reject(this.selectedOptions, option)
