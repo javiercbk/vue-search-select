@@ -3451,6 +3451,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.searchText = '';
 	      this.$emit('select', selectedOptions, option, 'insert');
 	    },
+	    onScroll: function onScroll(scrollEvent) {
+	      var element = scrollEvent.target;
+	      var offset = element.scrollTop + element.offsetHeight;
+	      var height = element.scrollHeight;
+	
+	      if (offset >= height && !this.exhaustedResults && !this.loading) {
+	        this._requestAsyncData({ term: this.searchText, delayMillis: 0, page: this.page + 1, toggleShow: false });
+	      }
+	    },
 	    deleteItem: function deleteItem(option) {
 	      var selectedOptions = (0, _reject2.default)(this.selectedOptions, option);
 	      this.$emit('select', selectedOptions, option, 'delete');
@@ -9308,7 +9317,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    on: {
 	      "mousedown": function($event) {
 	        $event.preventDefault();
-	      }
+	      },
+	      "scroll": _vm.onScroll
 	    }
 	  }, [_vm._l((_vm.filteredOptions), function(option, idx) {
 	    return [_c('div', {
