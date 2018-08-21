@@ -36,7 +36,7 @@
          :style="menuStyle"
          @scroll="onScroll"
          tabindex="-1">
-      <template v-for="(option, idx) in filteredOptions">
+      <template v-for="(option, idx) in nonSelectOptions">
         <div class="item"
              :class="{ 'selected': option.selected, 'current': pointer === idx }"
              :data-vss-custom-attr="customAttr(option)"
@@ -88,8 +88,11 @@
     data () {
       return {
         showMenu: false,
+        timeoutId: null,
         searchText: '',
         originalValues: [],
+        loading: false,
+        exhaustedResults: false,
         mousedownState: false, // mousedown on option menu
         pointer: 0,
         allOptions: []
@@ -163,22 +166,21 @@
       },
       nonSelectOptions () {
         return differenceBy(this.optionsWithOriginal, this.selectedOptions, 'value')
+      }
+    },
+    watch: {
+      value () {
+        this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
       },
-      filteredOptions () {
-        if (this.searchText) {
-          return this.nonSelectOptions.filter(option => {
-            try {
-              if (this.cleanSearch) {
-                return this.filterPredicate(this.accentsTidy(option.text), this.searchText)
-              } else {
-                return this.filterPredicate(option.text, this.searchText)
-              }
-            } catch (e) {
-              return true
-            }
-          })
-        } else {
-          return this.nonSelectOptions
+      searchText (newTerm) {
+        this.exhaustedResults = false
+        if (this.$refs.input === document.activeElement) {
+          this._requestAsyncData({ term: newTerm })
+        }
+      },
+      disabled (newDisabled) {
+        if (!newDisabled) {
+          this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
         }
       }
     },

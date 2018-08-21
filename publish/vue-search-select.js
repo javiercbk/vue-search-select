@@ -3309,8 +3309,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  data: function data() {
 	    return {
 	      showMenu: false,
+	      timeoutId: null,
 	      searchText: '',
 	      originalValues: [],
+	      loading: false,
+	      exhaustedResults: false,
 	      mousedownState: false,
 	      pointer: 0,
 	      allOptions: []
@@ -3387,24 +3390,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    nonSelectOptions: function nonSelectOptions() {
 	      return (0, _differenceBy2.default)(this.optionsWithOriginal, this.selectedOptions, 'value');
+	    }
+	  },
+	  watch: {
+	    value: function value() {
+	      this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false });
 	    },
-	    filteredOptions: function filteredOptions() {
-	      var _this2 = this;
-	
-	      if (this.searchText) {
-	        return this.nonSelectOptions.filter(function (option) {
-	          try {
-	            if (_this2.cleanSearch) {
-	              return _this2.filterPredicate(_this2.accentsTidy(option.text), _this2.searchText);
-	            } else {
-	              return _this2.filterPredicate(option.text, _this2.searchText);
-	            }
-	          } catch (e) {
-	            return true;
-	          }
-	        });
-	      } else {
-	        return this.nonSelectOptions;
+	    searchText: function searchText(newTerm) {
+	      this.exhaustedResults = false;
+	      if (this.$refs.input === document.activeElement) {
+	        this._requestAsyncData({ term: newTerm });
+	      }
+	    },
+	    disabled: function disabled(newDisabled) {
+	      if (!newDisabled) {
+	        this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false });
 	      }
 	    }
 	  },
@@ -3479,7 +3479,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return r;
 	    },
 	    _requestAsyncData: function _requestAsyncData(_ref) {
-	      var _this3 = this;
+	      var _this2 = this;
 	
 	      var term = _ref.term,
 	          _ref$delayMillis = _ref.delayMillis,
@@ -3493,27 +3493,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	        clearTimeout(this.timeoutId);
 	      }
 	      this.timeoutId = setTimeout(function () {
-	        _this3.loading = true;
+	        _this2.loading = true;
 	        if (toggleShow) {
-	          _this3.showMenu = false;
+	          _this2.showMenu = false;
 	        }
-	        _this3.httpClient(term, page).then(function (arr) {
-	          _this3.page = page;
+	        _this2.httpClient(term, page).then(function (arr) {
+	          _this2.page = page;
 	          if (page === 0) {
-	            _this3.allOptions = arr;
+	            _this2.allOptions = arr;
 	          } else if (arr.length) {
-	            _this3.allOptions = _this3.allOptions.concat(arr);
+	            _this2.allOptions = _this2.allOptions.concat(arr);
 	          } else {
-	            _this3.exhaustedResults = true;
+	            _this2.exhaustedResults = true;
 	          }
 	          if (toggleShow) {
-	            _this3.showMenu = true;
+	            _this2.showMenu = true;
 	          }
 	        }).catch(function (err) {
-	          _this3.$emit('ajax-select-error', err);
+	          _this2.$emit('ajax-select-error', err);
 	        }).finally(function () {
-	          _this3.timeoutId = null;
-	          _this3.loading = false;
+	          _this2.timeoutId = null;
+	          _this2.loading = false;
 	        });
 	      }, delayMillis);
 	    }
@@ -9320,7 +9320,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      },
 	      "scroll": _vm.onScroll
 	    }
-	  }, [_vm._l((_vm.filteredOptions), function(option, idx) {
+	  }, [_vm._l((_vm.nonSelectOptions), function(option, idx) {
 	    return [_c('div', {
 	      staticClass: "item",
 	      class: {
