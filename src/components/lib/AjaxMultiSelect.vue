@@ -224,6 +224,7 @@
       selectItem (option) {
         const selectedOptions = unionWith(this.selectedOptions, [option], isEqual)
         // this.closeOptions()
+        this.mousedownState = false
         this.searchText = ''
         this.$emit('select', selectedOptions, option, 'insert')
       },

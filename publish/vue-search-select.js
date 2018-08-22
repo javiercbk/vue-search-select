@@ -3448,6 +3448,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    selectItem: function selectItem(option) {
 	      var selectedOptions = (0, _unionWith2.default)(this.selectedOptions, [option], _isEqual2.default);
 	
+	      this.mousedownState = false;
 	      this.searchText = '';
 	      this.$emit('select', selectedOptions, option, 'insert');
 	    },
