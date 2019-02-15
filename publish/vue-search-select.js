@@ -3052,6 +3052,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      searchText: '',
 	      lastTermSearched: null,
 	      currentSearch: null,
+	      httpClientChanged: false,
 	      page: 0,
 	      exhaustedResults: false,
 	      originalValue: { text: '', value: '' },
@@ -3143,6 +3144,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (!newDisabled) {
 	        this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false });
 	      }
+	    },
+	    httpClient: function httpClient(newValue) {
+	      this.httpClientChanged = true;
 	    }
 	  },
 	  methods: {
@@ -3213,7 +3217,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _ref$page = _ref.page,
 	          page = _ref$page === undefined ? 0 : _ref$page;
 	
-	      if (term !== this.lastTermSearched && term !== this.currentSearch || page > 0) {
+	      if (term !== this.lastTermSearched && term !== this.currentSearch || page > 0 || this.httpClientChanged) {
+	        this.httpClientChanged = false;
 	        this.currentSearch = term;
 	        if (this.timeoutId) {
 	          clearTimeout(this.timeoutId);
@@ -3320,6 +3325,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      searchText: '',
 	      lastTermSearched: null,
 	      currentSearch: null,
+	      httpClientChanged: false,
 	      originalValues: [],
 	      loading: false,
 	      exhaustedResults: false,
@@ -3415,6 +3421,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (!newDisabled) {
 	        this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false });
 	      }
+	    },
+	    httpClient: function httpClient(newValue) {
+	      this.httpClientChanged = true;
 	    }
 	  },
 	  methods: {
@@ -3499,8 +3508,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _ref$page = _ref.page,
 	          page = _ref$page === undefined ? 0 : _ref$page;
 	
-	      if (term !== this.lastTermSearched && term !== this.currentSearch || page > 0) {
+	      if (term !== this.lastTermSearched && term !== this.currentSearch || page > 0 || this.httpClientChanged) {
 	        this.currentSearch = term;
+	        this.httpClientChanged = false;
 	        if (this.timeoutId) {
 	          clearTimeout(this.timeoutId);
 	        }
