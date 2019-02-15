@@ -3050,6 +3050,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      timeoutId: null,
 	      loading: false,
 	      searchText: '',
+	      lastTermSearched: null,
 	      page: 0,
 	      exhaustedResults: false,
 	      originalValue: { text: '', value: '' },
@@ -3128,7 +3129,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  },
 	  watch: {
-	    value: function value() {
+	    value: function value(newVal, oldVal) {
 	      this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false });
 	    },
 	    searchText: function searchText(newTerm) {
@@ -3211,33 +3212,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _ref$page = _ref.page,
 	          page = _ref$page === undefined ? 0 : _ref$page;
 	
-	      if (this.timeoutId) {
-	        clearTimeout(this.timeoutId);
-	      }
-	      this.timeoutId = setTimeout(function () {
-	        _this3.loading = true;
-	        if (toggleShow) {
-	          _this3.showMenu = false;
+	      if (term !== this.lastTermSearched) {
+	        if (this.timeoutId) {
+	          clearTimeout(this.timeoutId);
 	        }
-	        _this3.httpClient(term, page).then(function (arr) {
-	          _this3.page = page;
-	          if (page === 0) {
-	            _this3.allOptions = arr;
-	          } else if (arr.length) {
-	            _this3.allOptions = _this3.allOptions.concat(arr);
-	          } else {
-	            _this3.exhaustedResults = true;
-	          }
+	        this.timeoutId = setTimeout(function () {
+	          _this3.loading = true;
 	          if (toggleShow) {
-	            _this3.showMenu = true;
+	            _this3.showMenu = false;
 	          }
-	        }).catch(function (err) {
-	          _this3.$emit('ajax-select-error', err);
-	        }).finally(function () {
-	          _this3.timeoutId = null;
-	          _this3.loading = false;
-	        });
-	      }, delayMillis);
+	          _this3.httpClient(term, page).then(function (arr) {
+	            _this3.page = page;
+	            if (page === 0) {
+	              _this3.allOptions = arr;
+	            } else if (arr.length) {
+	              _this3.allOptions = _this3.allOptions.concat(arr);
+	            } else {
+	              _this3.exhaustedResults = true;
+	            }
+	            if (toggleShow) {
+	              _this3.showMenu = true;
+	            }
+	          }).catch(function (err) {
+	            _this3.$emit('ajax-select-error', err);
+	          }).finally(function () {
+	            _this3.timeoutId = null;
+	            _this3.loading = false;
+	            _this3.lastTermSearched = term;
+	          });
+	        }, delayMillis);
+	      }
 	    }
 	  }
 	};
@@ -3311,6 +3315,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      showMenu: false,
 	      timeoutId: null,
 	      searchText: '',
+	      lastTermSearched: null,
 	      originalValues: [],
 	      loading: false,
 	      exhaustedResults: false,
@@ -3490,33 +3495,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _ref$page = _ref.page,
 	          page = _ref$page === undefined ? 0 : _ref$page;
 	
-	      if (this.timeoutId) {
-	        clearTimeout(this.timeoutId);
-	      }
-	      this.timeoutId = setTimeout(function () {
-	        _this2.loading = true;
-	        if (toggleShow) {
-	          _this2.showMenu = false;
+	      if (term !== this.lastTermSearched) {
+	        if (this.timeoutId) {
+	          clearTimeout(this.timeoutId);
 	        }
-	        _this2.httpClient(term, page).then(function (arr) {
-	          _this2.page = page;
-	          if (page === 0) {
-	            _this2.allOptions = arr;
-	          } else if (arr.length) {
-	            _this2.allOptions = _this2.allOptions.concat(arr);
-	          } else {
-	            _this2.exhaustedResults = true;
-	          }
+	        this.timeoutId = setTimeout(function () {
+	          _this2.loading = true;
 	          if (toggleShow) {
-	            _this2.showMenu = true;
+	            _this2.showMenu = false;
 	          }
-	        }).catch(function (err) {
-	          _this2.$emit('ajax-select-error', err);
-	        }).finally(function () {
-	          _this2.timeoutId = null;
-	          _this2.loading = false;
-	        });
-	      }, delayMillis);
+	          _this2.httpClient(term, page).then(function (arr) {
+	            _this2.page = page;
+	            if (page === 0) {
+	              _this2.allOptions = arr;
+	            } else if (arr.length) {
+	              _this2.allOptions = _this2.allOptions.concat(arr);
+	            } else {
+	              _this2.exhaustedResults = true;
+	            }
+	            if (toggleShow) {
+	              _this2.showMenu = true;
+	            }
+	          }).catch(function (err) {
+	            _this2.$emit('ajax-select-error', err);
+	          }).finally(function () {
+	            _this2.timeoutId = null;
+	            _this2.loading = false;
+	            _this2.lastTermSearched = term;
+	          });
+	        }, delayMillis);
+	      }
 	    }
 	  }
 	};
@@ -8894,6 +8902,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      'active visible': _vm.showMenu, 'error': _vm.isError, 'disabled': _vm.isDisabled
 	    },
 	    on: {
+	      "click": _vm.openOptions,
 	      "focus": _vm.openOptions
 	    }
 	  }, [_c('i', {
@@ -9228,6 +9237,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      'active visible': _vm.showMenu, 'error': _vm.isError, 'disabled': _vm.isDisabled
 	    },
 	    on: {
+	      "click": _vm.openOptions,
 	      "focus": _vm.openOptions
 	    }
 	  }, [_c('i', {

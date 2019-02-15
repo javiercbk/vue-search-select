@@ -1,6 +1,7 @@
 <template>
   <div class="ui fluid multiple search selection dropdown"
        :class="{ 'active visible':showMenu, 'error': isError, 'disabled': isDisabled }"
+       @click="openOptions"
        @focus="openOptions">
     <i class="dropdown" :class="dynamicClass"></i>
     <template v-for="option in selectedOptions">
@@ -89,6 +90,7 @@
         showMenu: false,
         timeoutId: null,
         searchText: '',
+        lastTermSearched: null,
         originalValues: [],
         loading: false,
         exhaustedResults: false,
@@ -255,33 +257,36 @@
         return r
       },
       _requestAsyncData ({ term, delayMillis = this.delayMillis, toggleShow = true, page = 0 }) {
-        if (this.timeoutId) {
-          clearTimeout(this.timeoutId)
-        }
-        this.timeoutId = setTimeout(() => {
-          this.loading = true
-          if (toggleShow) {
-            this.showMenu = false
+        if (term !== this.lastTermSearched) {
+          if (this.timeoutId) {
+            clearTimeout(this.timeoutId)
           }
-          this.httpClient(term, page).then((arr) => {
-            this.page = page
-            if (page === 0) {
-              this.allOptions = arr
-            } else if (arr.length) {
-              this.allOptions = this.allOptions.concat(arr)
-            } else {
-              this.exhaustedResults = true
-            }
+          this.timeoutId = setTimeout(() => {
+            this.loading = true
             if (toggleShow) {
-              this.showMenu = true
+              this.showMenu = false
             }
-          }).catch((err) => {
-            this.$emit('ajax-select-error', err)
-          }).finally(() => {
-            this.timeoutId = null
-            this.loading = false
-          })
-        }, delayMillis)
+            this.httpClient(term, page).then((arr) => {
+              this.page = page
+              if (page === 0) {
+                this.allOptions = arr
+              } else if (arr.length) {
+                this.allOptions = this.allOptions.concat(arr)
+              } else {
+                this.exhaustedResults = true
+              }
+              if (toggleShow) {
+                this.showMenu = true
+              }
+            }).catch((err) => {
+              this.$emit('ajax-select-error', err)
+            }).finally(() => {
+              this.timeoutId = null
+              this.loading = false
+              this.lastTermSearched = term
+            })
+          }, delayMillis)
+        }
       }
     }
   }

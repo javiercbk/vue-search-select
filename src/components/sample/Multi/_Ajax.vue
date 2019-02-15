@@ -104,6 +104,7 @@
       httpClient (newTerm, page) {
         const from = page * perPage
         const to = from + perPage
+        console.log(`Searching for ${newTerm}`)
         return new Promise((resolve) => {
           setTimeout(() => {
             const allResults = options.filter(o => o.text.indexOf(newTerm) !== -1)
