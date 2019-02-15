@@ -3213,7 +3213,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _ref$page = _ref.page,
 	          page = _ref$page === undefined ? 0 : _ref$page;
 	
-	      if (term !== this.lastTermSearched && term !== this.currentSearch) {
+	      if (term !== this.lastTermSearched && term !== this.currentSearch || page > 0) {
 	        this.currentSearch = term;
 	        if (this.timeoutId) {
 	          clearTimeout(this.timeoutId);
@@ -3499,7 +3499,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _ref$page = _ref.page,
 	          page = _ref$page === undefined ? 0 : _ref$page;
 	
-	      if (term !== this.lastTermSearched && term !== this.currentSearch) {
+	      if (term !== this.lastTermSearched && term !== this.currentSearch || page > 0) {
 	        this.currentSearch = term;
 	        if (this.timeoutId) {
 	          clearTimeout(this.timeoutId);
