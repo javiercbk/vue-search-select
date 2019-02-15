@@ -186,7 +186,7 @@
           this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
         }
       },
-      httpClient(newValue) {
+      httpClient (newValue) {
         this.httpClientChanged = true
         this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
       }
