@@ -3958,7 +3958,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    optionsWithOriginal: function optionsWithOriginal() {
 	      var _this = this;
 	
-	      if (this.originalValue.value && this.showMissingOptions) {
+	      if (this.originalValue && this.originalValue.value && this.showMissingOptions) {
 	        var hasOriginalValue = this.options.filter(function (o) {
 	          return o.value === _this.originalValue;
 	        }).length === 1;
@@ -8894,7 +8894,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      'active visible': _vm.showMenu, 'error': _vm.isError, 'disabled': _vm.isDisabled
 	    },
 	    on: {
-	      "click": _vm.openOptions,
 	      "focus": _vm.openOptions
 	    }
 	  }, [_c('i', {
@@ -9229,7 +9228,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      'active visible': _vm.showMenu, 'error': _vm.isError, 'disabled': _vm.isDisabled
 	    },
 	    on: {
-	      "click": _vm.openOptions,
 	      "focus": _vm.openOptions
 	    }
 	  }, [_c('i', {
