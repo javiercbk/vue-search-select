@@ -86,6 +86,7 @@
         this.item = options[0]
       },
       httpClient (newTerm) {
+        console.log(`Searching for ${newTerm}`)
         return new Promise((resolve) => {
           setTimeout(() => {
             resolve(options.filter(o => o.text.indexOf(newTerm) !== -1))
