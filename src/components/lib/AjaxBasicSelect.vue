@@ -1,7 +1,6 @@
 <template>
   <div class="ui fluid search selection dropdown"
        :class="{ 'active visible':showMenu, 'error': isError, 'disabled': isDisabled }"
-       @click="openOptions"
        @focus="openOptions">
     <i class="dropdown" :class="dynamicClass"></i>
     <input class="search"

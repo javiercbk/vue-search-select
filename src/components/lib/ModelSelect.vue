@@ -66,7 +66,7 @@
     },
     computed: {
       optionsWithOriginal () {
-        if (this.originalValue.value && this.showMissingOptions) {
+        if (this.originalValue && this.originalValue.value && this.showMissingOptions) {
           const hasOriginalValue = this.options.filter(o => o.value === this.originalValue).length === 1
           if (!hasOriginalValue) {
             return this.options.concat([this.originalValue])

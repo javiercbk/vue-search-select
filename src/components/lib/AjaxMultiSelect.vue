@@ -1,7 +1,6 @@
 <template>
   <div class="ui fluid multiple search selection dropdown"
        :class="{ 'active visible':showMenu, 'error': isError, 'disabled': isDisabled }"
-       @click="openOptions"
        @focus="openOptions">
     <i class="dropdown" :class="dynamicClass"></i>
     <template v-for="option in selectedOptions">
