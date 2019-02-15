@@ -3187,7 +3187,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      _common2.default.mousedownItem(this);
 	    },
 	    resetData: function resetData() {
-	      var forceHttpRequest = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+	      var forceHttpRequest = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 	
 	      this.searchText = '';
 	      this.closeOptions();
@@ -3503,7 +3503,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return r;
 	    },
 	    resetData: function resetData() {
-	      var forceHttpRequest = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+	      var forceHttpRequest = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 	
 	      this.searchText = '';
 	      this.closeOptions();
