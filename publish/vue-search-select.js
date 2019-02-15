@@ -3051,6 +3051,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      loading: false,
 	      searchText: '',
 	      lastTermSearched: null,
+	      currentSearch: null,
 	      page: 0,
 	      exhaustedResults: false,
 	      originalValue: { text: '', value: '' },
@@ -3212,7 +3213,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _ref$page = _ref.page,
 	          page = _ref$page === undefined ? 0 : _ref$page;
 	
-	      if (term !== this.lastTermSearched) {
+	      if (term !== this.lastTermSearched && term !== this.currentSearch) {
+	        this.currentSearch = term;
 	        if (this.timeoutId) {
 	          clearTimeout(this.timeoutId);
 	        }
@@ -3239,6 +3241,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            _this3.timeoutId = null;
 	            _this3.loading = false;
 	            _this3.lastTermSearched = term;
+	            _this3.currentSearch = null;
 	          });
 	        }, delayMillis);
 	      }
@@ -3316,6 +3319,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      timeoutId: null,
 	      searchText: '',
 	      lastTermSearched: null,
+	      currentSearch: null,
 	      originalValues: [],
 	      loading: false,
 	      exhaustedResults: false,
@@ -3495,7 +3499,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _ref$page = _ref.page,
 	          page = _ref$page === undefined ? 0 : _ref$page;
 	
-	      if (term !== this.lastTermSearched) {
+	      if (term !== this.lastTermSearched && term !== this.currentSearch) {
+	        this.currentSearch = term;
 	        if (this.timeoutId) {
 	          clearTimeout(this.timeoutId);
 	        }
@@ -3522,6 +3527,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            _this2.timeoutId = null;
 	            _this2.loading = false;
 	            _this2.lastTermSearched = term;
+	            _this2.currentSearch = null;
 	          });
 	        }, delayMillis);
 	      }

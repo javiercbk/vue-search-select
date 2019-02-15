@@ -91,6 +91,7 @@
         timeoutId: null,
         searchText: '',
         lastTermSearched: null,
+        currentSearch: null,
         originalValues: [],
         loading: false,
         exhaustedResults: false,
@@ -257,7 +258,8 @@
         return r
       },
       _requestAsyncData ({ term, delayMillis = this.delayMillis, toggleShow = true, page = 0 }) {
-        if (term !== this.lastTermSearched) {
+        if (term !== this.lastTermSearched && term !== this.currentSearch) {
+          this.currentSearch = term
           if (this.timeoutId) {
             clearTimeout(this.timeoutId)
           }
@@ -284,6 +286,7 @@
               this.timeoutId = null
               this.loading = false
               this.lastTermSearched = term
+              this.currentSearch = null
             })
           }, delayMillis)
         }
