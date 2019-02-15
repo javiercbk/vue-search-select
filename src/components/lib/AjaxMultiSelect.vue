@@ -262,7 +262,7 @@
         r = r.replace(new RegExp('[ýÿ]', 'g'), 'y')
         return r
       },
-      resetData (forceHttpRequest = false) {
+      resetData (forceHttpRequest = true) {
         this.searchText = ''
         this.closeOptions()
         this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false, forceHttpRequest })
