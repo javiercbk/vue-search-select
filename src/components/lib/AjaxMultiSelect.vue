@@ -262,8 +262,13 @@
         r = r.replace(new RegExp('[ýÿ]', 'g'), 'y')
         return r
       },
-      _requestAsyncData ({ term, delayMillis = this.delayMillis, toggleShow = true, page = 0 }) {
-        if ((term !== this.lastTermSearched && term !== this.currentSearch) || page > 0 || this.httpClientChanged) {
+      resetData (forceHttpRequest = false) {
+        this.searchText = ''
+        this.closeOptions()
+        this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false, forceHttpRequest })
+      },
+      _requestAsyncData ({ term, delayMillis = this.delayMillis, toggleShow = true, page = 0, forceHttpRequest = false }) {
+        if ((term !== this.lastTermSearched && term !== this.currentSearch) || page > 0 || this.httpClientChanged || forceHttpRequest) {
           this.currentSearch = term
           this.httpClientChanged = false
           if (this.timeoutId) {

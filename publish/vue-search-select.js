@@ -3187,9 +3187,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      _common2.default.mousedownItem(this);
 	    },
 	    resetData: function resetData() {
+	      var forceHttpRequest = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+	
 	      this.searchText = '';
 	      this.closeOptions();
-	      this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false });
+	      this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false, forceHttpRequest: forceHttpRequest });
 	    },
 	    selectItem: function selectItem(option) {
 	      this.searchText = '';
@@ -3215,9 +3217,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _ref$toggleShow = _ref.toggleShow,
 	          toggleShow = _ref$toggleShow === undefined ? true : _ref$toggleShow,
 	          _ref$page = _ref.page,
-	          page = _ref$page === undefined ? 0 : _ref$page;
+	          page = _ref$page === undefined ? 0 : _ref$page,
+	          _ref$forceHttpRequest = _ref.forceHttpRequest,
+	          forceHttpRequest = _ref$forceHttpRequest === undefined ? false : _ref$forceHttpRequest;
 	
-	      if (term !== this.lastTermSearched && term !== this.currentSearch || page > 0 || this.httpClientChanged) {
+	      if (term !== this.lastTermSearched && term !== this.currentSearch || page > 0 || this.httpClientChanged || forceHttpRequest) {
 	        this.httpClientChanged = false;
 	        this.currentSearch = term;
 	        if (this.timeoutId) {
@@ -3498,6 +3502,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      r = r.replace(new RegExp('[ýÿ]', 'g'), 'y');
 	      return r;
 	    },
+	    resetData: function resetData() {
+	      var forceHttpRequest = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+	
+	      this.searchText = '';
+	      this.closeOptions();
+	      this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false, forceHttpRequest: forceHttpRequest });
+	    },
 	    _requestAsyncData: function _requestAsyncData(_ref) {
 	      var _this2 = this;
 	
@@ -3507,9 +3518,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _ref$toggleShow = _ref.toggleShow,
 	          toggleShow = _ref$toggleShow === undefined ? true : _ref$toggleShow,
 	          _ref$page = _ref.page,
-	          page = _ref$page === undefined ? 0 : _ref$page;
+	          page = _ref$page === undefined ? 0 : _ref$page,
+	          _ref$forceHttpRequest = _ref.forceHttpRequest,
+	          forceHttpRequest = _ref$forceHttpRequest === undefined ? false : _ref$forceHttpRequest;
 	
-	      if (term !== this.lastTermSearched && term !== this.currentSearch || page > 0 || this.httpClientChanged) {
+	      if (term !== this.lastTermSearched && term !== this.currentSearch || page > 0 || this.httpClientChanged || forceHttpRequest) {
 	        this.currentSearch = term;
 	        this.httpClientChanged = false;
 	        if (this.timeoutId) {
