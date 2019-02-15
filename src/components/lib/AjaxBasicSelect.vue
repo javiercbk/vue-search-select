@@ -81,6 +81,7 @@
         searchText: '',
         lastTermSearched: null,
         currentSearch: null,
+        httpClientChanged: false,
         page: 0,
         exhaustedResults: false,
         originalValue: { text: '', value: '' },
@@ -165,6 +166,9 @@
         if (!newDisabled) {
           this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
         }
+      },
+      httpClient(newValue) {
+        this.httpClientChanged = true
       }
     },
     methods: {
@@ -225,7 +229,8 @@
         }
       },
       _requestAsyncData ({ term, delayMillis = this.delayMillis, toggleShow = true, page = 0 }) {
-        if ((term !== this.lastTermSearched && term !== this.currentSearch) || page > 0) {
+        if ((term !== this.lastTermSearched && term !== this.currentSearch) || page > 0 || this.httpClientChanged) {
+          this.httpClientChanged = false
           this.currentSearch = term
           if (this.timeoutId) {
             clearTimeout(this.timeoutId)
