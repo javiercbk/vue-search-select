@@ -188,6 +188,7 @@
       },
       httpClient(newValue) {
         this.httpClientChanged = true
+        this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
       }
     },
     methods: {
