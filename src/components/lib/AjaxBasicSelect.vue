@@ -1,9 +1,8 @@
 <template>
   <div class="ui fluid search selection dropdown"
        :class="{ 'active visible':showMenu, 'error': isError, 'disabled': isDisabled }"
-       @click="openOptions"
        @focus="openOptions">
-    <i class="dropdown icon"></i>
+    <i class="dropdown" :class="dynamicClass"></i>
     <input class="search"
            autocomplete="off"
            tabindex="0"
@@ -16,8 +15,7 @@
            @keydown.down="nextItem"
            @keydown.enter.prevent=""
            @keyup.enter.prevent="enterItem"
-           @keydown.delete="deleteTextOrItem"
-    />
+           @keydown.delete="deleteTextOrItem"/>
     <div class="text"
          :class="textClass" :data-vss-custom-attr="searchTextCustomAttr">{{inputText}}
     </div>
@@ -26,8 +24,9 @@
          @mousedown.prevent
          :class="menuClass"
          :style="menuStyle"
+         @scroll="onScroll"
          tabindex="-1">
-      <template v-for="(option, idx) in filteredOptions">
+      <template v-for="(option, idx) in allOptions">
         <div class="item"
              :class="{ 'selected': option.selected, 'current': pointer === idx }"
              :data-vss-custom-attr="customAttrs[idx] ? customAttrs[idx] : ''"
@@ -56,29 +55,46 @@
       selectedOption: {
         type: Object,
         default: () => { return { value: '', text: '' } }
+      },
+      loadingIconClass: {
+        type: String
+      },
+      httpClient: {
+        type: Function,
+        required: true
+      },
+      delayMillis: {
+        type: Number,
+        default: 500
       }
     },
     created () {
       this.originalValue = this.selectedOption
+      this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
     },
     data () {
       return {
         showMenu: false,
+        timeoutId: null,
+        loading: false,
         searchText: '',
+        page: 0,
+        exhaustedResults: false,
         originalValue: { text: '', value: '' },
         mousedownState: false, // mousedown on option menu
-        pointer: 0
+        pointer: 0,
+        allOptions: []
       }
     },
     computed: {
       optionsWithOriginal () {
         if (this.originalValue.value && this.showMissingOptions) {
-          const hasOriginalValue = this.options.filter(o => o.value === this.originalValue).length === 1
+          const hasOriginalValue = this.allOptions.filter(o => o.value === this.originalValue).length === 1
           if (!hasOriginalValue) {
-            return this.options.concat([this.originalValue])
+            return this.allOptions.concat([this.originalValue])
           }
         }
-        return this.options
+        return this.allOptions
       },
       searchTextCustomAttr () {
         if (this.selectedOption && this.selectedOption.value) {
@@ -125,17 +141,26 @@
           display: this.showMenu ? 'block' : 'none'
         }
       },
-      filteredOptions () {
-        if (this.searchText) {
-          return this.optionsWithOriginal.filter((option) => {
-            try {
-              return this.filterPredicate(option.text, this.searchText)
-            } catch (e) {
-              return true
-            }
-          })
-        } else {
-          return this.optionsWithOriginal
+      dynamicClass () {
+        if (this.loading && this.loadingIconClass) {
+          return `icon-right ${this.loadingIconClass}`
+        }
+        return 'icon'
+      }
+    },
+    watch: {
+      value () {
+        this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
+      },
+      searchText (newTerm) {
+        this.exhaustedResults = false
+        if (this.$refs.input === document.activeElement) {
+          this._requestAsyncData({ term: newTerm })
+        }
+      },
+      disabled (newDisabled) {
+        if (!newDisabled) {
+          this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
         }
       }
     },
@@ -148,6 +173,9 @@
       },
       openOptions () {
         common.openOptions(this)
+        if (this.selectedOption && this.selectedOption.value) {
+          this._requestAsyncData({ term: this.searchText, delayMillis: 0, toggleShow: false })
+        }
       },
       blurInput () {
         common.blurInput(this)
@@ -173,10 +201,54 @@
       mousedownItem () {
         common.mousedownItem(this)
       },
+      resetData () {
+        this.searchText = ''
+        this.closeOptions()
+        this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
+      },
       selectItem (option) {
         this.searchText = '' // reset text when select item
         this.closeOptions()
         this.$emit('select', option)
+        this.$refs.input.blur()
+      },
+      onScroll (scrollEvent) {
+        const element = scrollEvent.target
+        const offset = element.scrollTop + element.offsetHeight
+        const height = element.scrollHeight
+
+        if (offset >= height && !this.exhaustedResults && !this.loading) {
+          this._requestAsyncData({ term: this.searchText, delayMillis: 0, page: this.page + 1, toggleShow: false })
+        }
+      },
+      _requestAsyncData ({ term, delayMillis = this.delayMillis, toggleShow = true, page = 0 }) {
+        if (this.timeoutId) {
+          clearTimeout(this.timeoutId)
+        }
+        this.timeoutId = setTimeout(() => {
+          this.loading = true
+          if (toggleShow) {
+            this.showMenu = false
+          }
+          this.httpClient(term, page).then((arr) => {
+            this.page = page
+            if (page === 0) {
+              this.allOptions = arr
+            } else if (arr.length) {
+              this.allOptions = this.allOptions.concat(arr)
+            } else {
+              this.exhaustedResults = true
+            }
+            if (toggleShow) {
+              this.showMenu = true
+            }
+          }).catch((err) => {
+            this.$emit('ajax-select-error', err)
+          }).finally(() => {
+            this.timeoutId = null
+            this.loading = false
+          })
+        }, delayMillis)
       }
     }
   }
@@ -184,6 +256,10 @@
 
 <style scoped src="semantic-ui-dropdown/dropdown.css"></style>
 <style>
+  /* custom icon float right*/
+  .ui .dropdown.icon-right {
+    float: right;
+  }
   /* Menu Item Hover */
   .ui.dropdown .menu > .item:hover {
     background: none transparent !important;

@@ -1,10 +1,9 @@
 <template>
   <div class="ui fluid multiple search selection dropdown"
        :class="{ 'active visible':showMenu, 'error': isError, 'disabled': isDisabled }"
-       @click="openOptions"
        @focus="openOptions">
-    <i class="dropdown icon"></i>
-    <template v-for="(option, idx) in selectedOptions">
+    <i class="dropdown" :class="dynamicClass"></i>
+    <template v-for="option in selectedOptions">
       <a class="ui label transition visible"
          style="display: inline-block !important;"
          :data-vss-custom-attr="customAttr(option)">
@@ -27,15 +26,16 @@
            @keydown.delete="deleteTextOrLastItem"
     />
     <div class="text"
-         :class="textClass">{{inputText}}
+         :class="textClass" :data-vss-custom-attr="searchTextCustomAttr">{{inputText}}
     </div>
     <div class="menu"
          ref="menu"
          @mousedown.prevent
          :class="menuClass"
          :style="menuStyle"
+         @scroll="onScroll"
          tabindex="-1">
-      <template v-for="(option, idx) in filteredOptions">
+      <template v-for="(option, idx) in nonSelectOptions">
         <div class="item"
              :class="{ 'selected': option.selected, 'current': pointer === idx }"
              :data-vss-custom-attr="customAttr(option)"
@@ -71,29 +71,51 @@
       cleanSearch: {
         type: Boolean,
         default: true
+      },
+      loadingIconClass: {
+        type: String
+      },
+      httpClient: {
+        type: Function,
+        required: true
+      },
+      delayMillis: {
+        type: Number,
+        default: 500
       }
     },
     data () {
       return {
         showMenu: false,
+        timeoutId: null,
         searchText: '',
         originalValues: [],
+        loading: false,
+        exhaustedResults: false,
         mousedownState: false, // mousedown on option menu
-        pointer: 0
+        pointer: 0,
+        allOptions: []
       }
     },
     created () {
       this.originalValues = this.selectedOptions
+      this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
     },
     computed: {
       optionsWithOriginal () {
         if (this.originalValues.length && this.showMissingOptions) {
-          const missingValues = differenceBy(this.originalValues, this.options)
+          const missingValues = differenceBy(this.originalValues, this.allOptions)
           if (missingValues.length) {
-            return this.options.concat(missingValues)
+            return this.allOptions.concat(missingValues)
           }
         }
-        return this.options
+        return this.allOptions
+      },
+      searchTextCustomAttr () {
+        if (this.selectedOption && this.selectedOption.value) {
+          return this.customAttr(this.selectedOption)
+        }
+        return ''
       },
       inputText () {
         if (this.searchText) {
@@ -101,6 +123,22 @@
         } else {
           return this.placeholder
         }
+      },
+      customAttrs () {
+        try {
+          if (Array.isArray(this.optionsWithOriginal)) {
+            return this.optionsWithOriginal.map(o => this.customAttr(o))
+          }
+        } catch (e) {
+          // if there is an error, just return an empty array
+        }
+        return []
+      },
+      dynamicClass () {
+        if (this.loading && this.loadingIconClass) {
+          return `icon-right ${this.loadingIconClass}`
+        }
+        return 'icon'
       },
       textClass () {
         if (this.placeholder) {
@@ -127,22 +165,21 @@
       },
       nonSelectOptions () {
         return differenceBy(this.optionsWithOriginal, this.selectedOptions, 'value')
+      }
+    },
+    watch: {
+      value () {
+        this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
       },
-      filteredOptions () {
-        if (this.searchText) {
-          return this.nonSelectOptions.filter(option => {
-            try {
-              if (this.cleanSearch) {
-                return this.filterPredicate(this.accentsTidy(option.text), this.searchText)
-              } else {
-                return this.filterPredicate(option.text, this.searchText)
-              }
-            } catch (e) {
-              return true
-            }
-          })
-        } else {
-          return this.nonSelectOptions
+      searchText (newTerm) {
+        this.exhaustedResults = false
+        if (this.$refs.input === document.activeElement) {
+          this._requestAsyncData({ term: newTerm })
+        }
+      },
+      disabled (newDisabled) {
+        if (!newDisabled) {
+          this._requestAsyncData({ term: '', delayMillis: 0, toggleShow: false })
         }
       }
     },
@@ -185,9 +222,19 @@
       },
       selectItem (option) {
         const selectedOptions = unionWith(this.selectedOptions, [option], isEqual)
-        this.closeOptions()
+        // this.closeOptions()
+        this.mousedownState = false
         this.searchText = ''
         this.$emit('select', selectedOptions, option, 'insert')
+      },
+      onScroll (scrollEvent) {
+        const element = scrollEvent.target
+        const offset = element.scrollTop + element.offsetHeight
+        const height = element.scrollHeight
+
+        if (offset >= height && !this.exhaustedResults && !this.loading) {
+          this._requestAsyncData({ term: this.searchText, delayMillis: 0, page: this.page + 1, toggleShow: false })
+        }
       },
       deleteItem (option) {
         const selectedOptions = reject(this.selectedOptions, option)
@@ -206,6 +253,35 @@
         r = r.replace(new RegExp('[ùúûü]', 'g'), 'u')
         r = r.replace(new RegExp('[ýÿ]', 'g'), 'y')
         return r
+      },
+      _requestAsyncData ({ term, delayMillis = this.delayMillis, toggleShow = true, page = 0 }) {
+        if (this.timeoutId) {
+          clearTimeout(this.timeoutId)
+        }
+        this.timeoutId = setTimeout(() => {
+          this.loading = true
+          if (toggleShow) {
+            this.showMenu = false
+          }
+          this.httpClient(term, page).then((arr) => {
+            this.page = page
+            if (page === 0) {
+              this.allOptions = arr
+            } else if (arr.length) {
+              this.allOptions = this.allOptions.concat(arr)
+            } else {
+              this.exhaustedResults = true
+            }
+            if (toggleShow) {
+              this.showMenu = true
+            }
+          }).catch((err) => {
+            this.$emit('ajax-select-error', err)
+          }).finally(() => {
+            this.timeoutId = null
+            this.loading = false
+          })
+        }, delayMillis)
       }
     }
   }

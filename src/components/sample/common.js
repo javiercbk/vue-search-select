@@ -19,5 +19,5 @@ export default {
     { value: '17', text: 'ef' + ' - ' + '17' },
     { value: '18', text: 'ef' + ' - ' + '18' },
     { value: '19', text: 'ef' + ' - ' + '19' }
-  ],
+  ]
 }
