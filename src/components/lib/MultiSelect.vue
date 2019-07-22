@@ -7,7 +7,9 @@
     <template v-for="(option, idx) in selectedOptions">
       <a class="ui label transition visible"
          style="display: inline-block !important;"
-         :data-vss-custom-attr="customAttr(option)">
+         :data-vss-custom-attr="customAttr(option)"
+         :class="{ 'clickable': selectedOptionsClickable }"
+         @click="onSelectedOptionClick($event, option)">
         {{option.text}}<i class="delete icon" @click="deleteItem(option)"></i>
       </a>
     </template>
@@ -61,6 +63,10 @@
   export default {
     mixins: [baseMixin, commonMixin, optionAwareMixin],
     props: {
+      selectedOptionsClickable: {
+        type: Boolean,
+        default: false
+      },
       selectedOptions: {
         type: Array
       },
@@ -206,11 +212,22 @@
         r = r.replace(new RegExp('[ùúûü]', 'g'), 'u')
         r = r.replace(new RegExp('[ýÿ]', 'g'), 'y')
         return r
+      },
+      onSelectedOptionClick (event, option) {
+        if (this.selectedOptionsClickable) {
+          event.stopPropagation();
+          this.$emit('selected-option-clicked', option)
+        }
       }
     }
   }
 </script>
 <style scoped src="semantic-ui-label/label.css"></style>
+<style scoped>
+.clickable {
+  pointer-events: all;
+}
+</style>
 <style scoped src="semantic-ui-dropdown/dropdown.css"></style>
 <style>
   /* Menu Item Hover for Key event */
